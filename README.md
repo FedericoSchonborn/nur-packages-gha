@@ -1,0 +1,1 @@
+[![Build and Populate Cache](https://github.com/FedericoSchonborn/nur-packages-gha/actions/workflows/build.yaml/badge.svg)](https://github.com/FedericoSchonborn/nur-packages-gha/actions/workflows/build.yaml)
