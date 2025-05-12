@@ -43,6 +43,7 @@ jobs:
         with:
           extra_nix_config: |
             nix-path = nixpkgs=channel:${{ matrix.channel }}
+            trusted-users = root runner
 
       - name: Set up Cachix
         uses: cachix/cachix-action@v16
