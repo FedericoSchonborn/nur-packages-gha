@@ -7,26 +7,33 @@ on:
   workflow_dispatch:
 
 jobs:
+  matrix:
+    name: Matrix
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        run: |
+          git clone --depth 1 https://codeberg.org/FedericoSchonborn/nur-packages.git $GITHUB_WORKSPACE
+
+      - name: Install Lix
+        uses: samueldr/lix-gha-installer-action@latest
+
+      - name: Generate Matrix
+        id: matrix
+        run: |
+          set -euo pipefail
+          matrix="$(nix eval --json '.#githubActionsMatrix')"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
   build:
+    name: Build (${{ matrix.channel }}, ${{ matrix.system }})
+    needs: matrix
     strategy:
       fail-fast: false
       matrix:
-        system:
-          - x86_64-linux
-          - aarch64-linux
-        channel:
-          - nixpkgs-unstable
-          - nixos-unstable
-          - nixos-24.11
-        include:
-          - system: x86_64-darwin
-            channel: nixpkgs-unstable
-          - system: x86_64-darwin
-            channel: nixpkgs-24.11-darwin
-          - system: aarch64-darwin
-            channel: nixpkgs-unstable
-          - system: aarch64-darwin
-            channel: nixpkgs-24.11-darwin
+        include: ${{ fromJSON(needs.matrix.outputs.matrix) }}
     runs-on: >-
       ${{ (matrix.system == 'x86_64-linux'   && 'ubuntu-24.04')
        || (matrix.system == 'aarch64-linux'  && 'ubuntu-24.04-arm')
@@ -43,7 +50,6 @@ jobs:
         with:
           extra_nix_config: |
             nix-path = nixpkgs=channel:${{ matrix.channel }}
-            trusted-users = root runner
 
       - name: Set up Cachix
         uses: cachix/cachix-action@v16
