@@ -1,10 +1,16 @@
 name: Build and Populate Cache
+run-name: Build and Populate Cache (${{ inputs.branch || 'main' }})
 
 on:
   push:
   schedule:
     - cron: "55 07 * * *"
   workflow_dispatch:
+    inputs:
+      branch:
+        required: true
+        type: string
+        default: main
 
 jobs:
   build:
@@ -37,7 +43,7 @@ jobs:
     steps:
       - name: Checkout
         run: |
-          git clone --depth 1 https://codeberg.org/FedericoSchonborn/nur-packages.git $GITHUB_WORKSPACE
+          git clone --depth 1 --branch ${{ inputs.branch || 'main' }} https://codeberg.org/FedericoSchonborn/nur-packages.git $GITHUB_WORKSPACE
 
       - name: Install Nix
         uses: cachix/install-nix-action@v30
