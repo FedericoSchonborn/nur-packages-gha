@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    name: Build (${{ matrix.channel }}, ${{ matrix.system }})
+    name: ${{ matrix.channel }}/${{ matrix.system }}
     strategy:
       fail-fast: false
       matrix:
