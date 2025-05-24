@@ -24,19 +24,14 @@ jobs:
         channel:
           - nixpkgs-unstable
           - nixos-unstable
-          - nixos-24.11
           - nixos-25.05
         include:
           - system: x86_64-darwin
             channel: nixpkgs-unstable
           - system: x86_64-darwin
-            channel: nixpkgs-24.11-darwin
-          - system: x86_64-darwin
             channel: nixpkgs-25.05-darwin
           - system: aarch64-darwin
             channel: nixpkgs-unstable
-          - system: aarch64-darwin
-            channel: nixpkgs-24.11-darwin
           - system: aarch64-darwin
             channel: nixpkgs-25.05-darwin
     runs-on: >-
