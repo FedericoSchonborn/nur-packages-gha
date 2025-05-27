@@ -4,10 +4,11 @@ run-name: Build and Populate Cache (${{ inputs.branch || 'main' }})
 on:
   push:
   schedule:
-    - cron: "55 07 * * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch:
     inputs:
       branch:
+        description: Branch
         required: true
         type: string
         default: main
