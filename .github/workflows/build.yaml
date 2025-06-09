@@ -48,7 +48,7 @@ jobs:
 
       - name: Install Nix
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf -L https://install.lix.systems/lix | sh -s -- install --no-confirm --extra-conf "trusted-users = root runner"
+          curl --proto '=https' --tlsv1.2 -sSf -L https://install.lix.systems/lix | sh -s -- install --no-confirm --extra-conf "trusted-users = root runner\naccess-tokens = github.com=${{ secrets.GITHUB_TOKEN }}"
 
       - name: Set up Cachix
         uses: cachix/cachix-action@v16
