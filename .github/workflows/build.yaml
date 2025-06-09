@@ -47,12 +47,8 @@ jobs:
           git clone --depth 1 --branch ${{ inputs.branch || 'main' }} https://codeberg.org/FedericoSchonborn/nur-packages.git $GITHUB_WORKSPACE
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v30
-        with:
-          nix_path: "nixpkgs=channel:${{ matrix.channel }}"
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf -L https://install.lix.systems/lix | sh -s -- install --no-confirm
 
       - name: Set up Cachix
         uses: cachix/cachix-action@v16
