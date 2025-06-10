@@ -21,8 +21,10 @@ jobs:
       matrix:
         system:
           - x86_64-linux
-          - aarch64-linux
           - i686-linux
+          - aarch64-linux
+          - armv7l-linux
+          - armv6l-linux
         channel:
           - nixpkgs-unstable
           - nixos-unstable
