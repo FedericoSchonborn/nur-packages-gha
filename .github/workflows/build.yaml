@@ -55,6 +55,7 @@ jobs:
         with:
           nix_path: "nixpkgs=channel:${{ matrix.channel }}"
           extra_nix_config: |
+            system = ${{ matrix.system }}
             experimental-features = nix-command flakes
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
@@ -79,4 +80,4 @@ jobs:
             -I "$PWD"
 
       - name: Build Nix packages
-        run: nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci.nix -A cacheOutputs -build-flags "--show-trace --print-build-logs --keep-going --keep-failed --system ${{ matrix.system }}"
+        run: nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci.nix -A cacheOutputs -build-flags "--show-trace --print-build-logs --keep-going --keep-failed"
