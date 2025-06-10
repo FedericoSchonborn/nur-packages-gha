@@ -40,6 +40,7 @@ jobs:
             channel: nixpkgs-25.05-darwin
     runs-on: >-
       ${{ (matrix.system == 'x86_64-linux'   && 'ubuntu-24.04')
+       || (matrix.system == 'i686-linux'     && 'ubuntu-24.04')
        || (matrix.system == 'aarch64-linux'  && 'ubuntu-24.04-arm')
        || (matrix.system == 'x86_64-darwin'  && 'macos-13')
        || (matrix.system == 'aarch64-darwin' && 'macos-15') }}
