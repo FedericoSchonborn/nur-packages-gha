@@ -3,6 +3,7 @@ run-name: Build and Populate Cache (${{ inputs.branch || 'main' }})
 
 on:
   push:
+  pull_request:
   schedule:
     - cron: "0 */6 * * *"
   workflow_dispatch:
@@ -14,32 +15,37 @@ on:
         default: main
 
 jobs:
+  matrix:
+    name: Matrix
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        run: |
+          git clone --depth 1 --branch ${{ inputs.branch || 'main' }} https://codeberg.org/FedericoSchonborn/nur-packages.git $GITHUB_WORKSPACE
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Generate Matrix
+        id: matrix
+        run: |
+          set -euo pipefail
+          matrix="$(nix eval --json ".#githubActionsMatrix")"
+          echo "matrix=$matrix" | tee -a "$GITHUB_OUTPUT"
+
   build:
     name: ${{ matrix.channel }}/${{ matrix.system }}
+    needs: matrix
     strategy:
-      fail-fast: false
       matrix:
-        system:
-          - x86_64-linux
-          - aarch64-linux
-        channel:
-          - nixpkgs-unstable
-          - nixos-unstable
-          - nixos-25.05
-        include:
-          - system: x86_64-darwin
-            channel: nixpkgs-unstable
-          - system: x86_64-darwin
-            channel: nixpkgs-25.05-darwin
-          - system: aarch64-darwin
-            channel: nixpkgs-unstable
-          - system: aarch64-darwin
-            channel: nixpkgs-25.05-darwin
-    runs-on: >-
-      ${{ (matrix.system == 'x86_64-linux'   && 'ubuntu-24.04')
-       || (matrix.system == 'aarch64-linux'  && 'ubuntu-24.04-arm')
-       || (matrix.system == 'x86_64-darwin'  && 'macos-13')
-       || (matrix.system == 'aarch64-darwin' && 'macos-15') }}
+        include: ${{ fromJSON(needs.matrix.outputs.matrix) }}
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Checkout
