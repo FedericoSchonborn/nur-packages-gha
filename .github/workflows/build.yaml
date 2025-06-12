@@ -25,7 +25,9 @@ jobs:
         channel:
           - nixpkgs-unstable
           - nixos-unstable
+          - nixos-unstable-small
           - nixos-25.05
+          - nixos-25.05-small
         include:
           - system: x86_64-darwin
             channel: nixpkgs-unstable
