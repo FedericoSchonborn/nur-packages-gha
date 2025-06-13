@@ -43,6 +43,7 @@ jobs:
     name: ${{ matrix.channel }}/${{ matrix.system }}
     needs: matrix
     strategy:
+      fail-fast: false
       matrix:
         include: ${{ fromJSON(needs.matrix.outputs.matrix) }}
     runs-on: ${{ matrix.runner }}
