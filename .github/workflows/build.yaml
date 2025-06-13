@@ -46,7 +46,7 @@ jobs:
       fail-fast: false
       matrix:
         include: ${{ fromJSON(needs.matrix.outputs.matrix) }}
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ matrix.runs-on }}
 
     steps:
       - name: Checkout
@@ -54,8 +54,10 @@ jobs:
           git clone --depth 1 --branch ${{ inputs.branch || 'main' }} https://codeberg.org/FedericoSchonborn/nur-packages.git $GITHUB_WORKSPACE
 
       - name: Install QEMU
+        if: ${{ matrix.qemu == true }}
         uses: docker/setup-qemu-action@v3
-        if: ${{ matrix.withQemu == true }}
+        with:
+          platforms: ${{ matrix.qemu-platform }}
 
       - name: Install Nix
         uses: cachix/install-nix-action@v30
@@ -86,4 +88,5 @@ jobs:
             -I "$PWD"
 
       - name: Build Nix packages
+        continue-on-error: ${{ matrix.continue-on-error }}
         run: nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci.nix -A cacheOutputs --system ${{ matrix.system }} -build-flags "--show-trace --print-build-logs --keep-going --keep-failed"
