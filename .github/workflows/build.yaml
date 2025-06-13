@@ -26,11 +26,12 @@ jobs:
         run: |
           git clone --depth 1 --branch ${{ inputs.branch || 'main' }} https://codeberg.org/FedericoSchonborn/nur-packages.git $GITHUB_WORKSPACE
 
-      - name: Install Nix
-        uses: cachix/install-nix-action@v30
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
+      - name: Install Lix
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf -L https://install.lix.systems/lix | sh -s -- install --no-confirm --extra-conf <<EOF
+            trusted-users = root runner
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+          EOF
 
       - name: Generate Matrix
         id: matrix
@@ -59,14 +60,14 @@ jobs:
         with:
           platforms: ${{ matrix.qemu-platform }}
 
-      - name: Install Nix
-        uses: cachix/install-nix-action@v30
-        with:
-          nix_path: nixpkgs=${{ matrix.channel-url }}
-          extra_nix_config: |
-            experimental-features = nix-command flakes
+      - name: Install Lix
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf -L https://install.lix.systems/lix | sh -s -- install --no-confirm --extra-conf <<EOF
+            nix-path: nixpkgs=${{ matrix.channel-url }}
+            trusted-users = root runner
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
             extra-platforms = ${{ matrix.system }}
+          EOF
 
       - name: Set up Cachix
         uses: cachix/cachix-action@v16
