@@ -88,4 +88,4 @@ jobs:
 
       - name: Build Nix packages
         continue-on-error: ${{ matrix.continue-on-error }}
-        run: nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci.nix -A cacheOutputs --system ${{ matrix.system }} -build-flags "--show-trace --print-build-logs --keep-going --keep-failed"
+        run: nix shell -f . lix-build-uncached -c nix-build-uncached ci.nix -A cacheOutputs --system ${{ matrix.system }} -build-flags "--show-trace --print-build-logs --keep-going --keep-failed"
