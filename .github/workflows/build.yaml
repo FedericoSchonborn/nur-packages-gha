@@ -1,5 +1,5 @@
-name: Build and Populate Cache
-run-name: Build and Populate Cache (${{ inputs.branch || 'main' }})
+name: Build
+run-name: Build (${{ inputs.branch || 'main' }})
 
 on:
   push:
